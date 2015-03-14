@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="FMCTestAuto" default="FMC_GFT" basedir=".">
+    <property name="src" value="./src" />
+    <property name="lib" value="./lib" />
+    <property name="bin" value="./bin" />
+    <property name="report" value="./report" />
+
+	<path id="FMCTestAuto.classpath">
+        <pathelement location="bin"/>
+        <pathelement location="lib/selenium-server-standalone-2.45.0.jar"/>
+    	<pathelement location="lib/junit-4.12.jar"/>
+		<pathelement location="lib/sqljdbc4-2.0.jar"/>
+
+		<pathelement location="${bin}" />
+        <fileset dir="${lib}">
+            <include name="**/*.jar" />
+        </fileset>
+
+    </path>
+
+	<target name="clean">
+        <delete dir="bin"/>
+		<delete dir="report"/>
+		<delete dir="out"/>
+		<delete file="build.xml.bak"/>
+		<delete file="junit*.*"/>
+		<delete dir="C:/DEV/TestAutomationPOC/Screenshots/*"/>
+    </target>
+
+    <target name="init">
+        <delete dir="${bin}" />
+        <mkdir dir="${bin}" />
+    </target>
+
+    <target name="compile" depends="init">
+        <javac source="1.7" srcdir="${src}" fork="true" destdir="${bin}" includeantruntime="false">
+            <classpath>
+                <pathelement path="${bin}">
+                </pathelement>
+                <fileset dir="${lib}">
+                    <include name="**/*.jar" />
+                </fileset>
+            </classpath>
+        </javac>
+    </target>
+
+    <target name="FMC_GFT" depends="compile">
+        <delete dir="${report}" />
+        <mkdir dir="${report}" />
+        <mkdir dir="${report}/xml" />
+
+        <junit fork="yes" printsummary="withOutAndErr" haltonfailure="no">
+
+            <classpath refid="FMCTestAuto.classpath">
+            </classpath>
+
+            <test name="com.custom.fmc.test.automation.FMCEnvHealthCheck" haltonfailure="no" todir="${report}/xml" outfile="TEST-FMCEnvHealthCheck">
+                <formatter type="xml" />
+            </test>
+
+            <test name="com.custom.fmc.test.automation.FMC_PhaseII_CHRONO_CRUISERS_ECM_846" haltonfailure="no" todir="${report}/xml" outfile="TEST-DemoSeleniumTesting">
+                <formatter type="xml" />
+            </test>
+
+       <!--
+            <test name="com.custom.fmc.test.automation.DemoSeleniumTesting" haltonfailure="no" todir="${report}/xml" outfile="TEST-DemoSeleniumTesting">
+                <formatter type="xml" />
+            </test>
+            -->
+
+        </junit>
+        <junitreport todir="${report}">
+            <fileset dir="${report}/xml">
+                <include name="TEST*.xml" />
+            </fileset>
+            <report format="frames" todir="${report}/html" />
+        </junitreport>
+    <!-- Generate PDF report
+        <junitpdfreport todir="." styledir="default">
+            <fileset dir="C:/Users/pmoorthy/IdeaProjects/TestAutoApp/report/xml/">
+                <include name="TEST-*.xml"/>
+            </fileset>
+        </junitpdfreport>
+        -->
+
+    </target>
+
+
+    <!-- Generate PDF report
+    <target name="testreport-pdf">
+        <junitpdfreport todir="." styledir="default">
+            <fileset dir="C:/Users/pmoorthy/IdeaProjects/TestAutoApp/report/xml/">
+                <include name="TEST-*.xml"/>
+            </fileset>
+        </junitpdfreport>
+    </target>
+    -->
+
+</project>
